@@ -35,7 +35,7 @@ from reflex.state import (
 )
 from reflex.utils import prerequisites, types
 from reflex.utils.format import json_dumps
-from reflex.vars import BaseVar, ComputedVar
+from reflex.vars import BaseVar, ComputedVar, mark_used
 
 from .states import GenState
 
@@ -120,7 +120,7 @@ class TestState(BaseState):
 
 
 # make variables used, so we can check them in the tests
-rx.fragment(
+mark_used(
     TestState.num1,
     TestState.num2,
     TestState.key,
@@ -155,7 +155,7 @@ class ChildState(TestState):
         self.count = count * 2
 
 
-rx.fragment(ChildState.value, ChildState.count)
+mark_used(ChildState.value, ChildState.count)
 
 
 class ChildState2(TestState):
@@ -163,13 +163,14 @@ class ChildState2(TestState):
 
     value: str
 
-rx.fragment(ChildState2.value)
+mark_used(ChildState2.value)
 
 class ChildState3(TestState):
     """A child state fixture."""
 
     value: str
 
+mark_used(ChildState3.value)
 
 class GrandchildState(ChildState):
     """A grandchild state fixture."""
@@ -180,6 +181,7 @@ class GrandchildState(ChildState):
         """Do something."""
         pass
 
+mark_used(GrandchildState.value2)
 
 class GrandchildState2(ChildState2):
     """A grandchild state fixture."""
@@ -193,6 +195,7 @@ class GrandchildState2(ChildState2):
         """
         return self.value
 
+mark_used(GrandchildState2.value)
 
 class GrandchildState3(ChildState3):
     """A great grandchild state fixture."""
@@ -205,9 +208,8 @@ class GrandchildState3(ChildState3):
             The value.
         """
         return self.value
-=======
-rx.fragment(GrandchildState.value2)
->>>>>>> f3202d2e (track variable and attribute usage, only include used variables in state dict)
+
+mark_used(GrandchildState3.value)
 
 
 class DateTimeState(BaseState):
@@ -219,7 +221,7 @@ class DateTimeState(BaseState):
     td: datetime.timedelta = datetime.timedelta(days=11, minutes=11)
 
 
-rx.fragment(
+mark_used(
     DateTimeState.d,
     DateTimeState.dt,
     DateTimeState.t,
@@ -1215,7 +1217,7 @@ def test_computed_var_cached():
             comp_v_calls += 1
             return self.v
 
-    rx.fragment(
+    mark_used(
         ComputedState.v,
         ComputedState.comp_v,
     )
@@ -1251,7 +1253,7 @@ def test_computed_var_cached_depends_on_non_cached():
         def comp_v(self) -> int:
             return self.v
 
-    rx.fragment(
+    mark_used(
         ComputedState.v,
         ComputedState.no_cache_v,
         ComputedState.comp_v,
@@ -1297,7 +1299,7 @@ def test_computed_var_depends_on_parent_non_cached():
         def dep_v(self) -> int:
             return self.no_cache_v  # type: ignore
 
-    rx.fragment(
+    mark_used(
         ChildState.no_cache_v,
         ChildState.dep_v,
         ChildState.router,
@@ -1352,7 +1354,7 @@ def test_cached_var_depends_on_event_handler(use_partial: bool):
             counter += 1
             return counter
 
-    rx.fragment(
+    mark_used(
         HandlerState.x,
         HandlerState.cached_x_side_effect,
     )
@@ -1431,7 +1433,7 @@ def test_computed_var_dependencies():
             """
             return [z in self._z for z in range(5)]
 
-    rx.fragment(
+    mark_used(
         ComputedState.comp_v,
         ComputedState.comp_w,
         ComputedState.comp_x,
@@ -2458,7 +2460,7 @@ def test_state_which_uses_router_data():
     class StateWithRouterData(BaseState):
         pass
 
-    rx.fragment(
+    mark_used(
         StateWithRouterData.router.page,
         StateWithRouterData.router.session,
         StateWithRouterData.router.headers,
@@ -2479,7 +2481,7 @@ def test_json_dumps_with_mutables():
     class MutableContainsBase(BaseState):
         items: List[Foo] = [Foo()]
 
-    rx.fragment(
+    mark_used(
         MutableContainsBase.items[0],
     )
 
