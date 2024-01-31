@@ -9,7 +9,6 @@ from selenium.webdriver.common.keys import Keys
 
 from reflex.testing import AppHarness
 from reflex.utils import format
-from reflex.vars import mark_used
 
 
 def FormSubmit(form_component):
@@ -19,6 +18,7 @@ def FormSubmit(form_component):
         form_component: The str name of the form component to use.
     """
     import reflex as rx
+    from reflex.vars import mark_used
 
     class FormState(rx.State):
         form_data: dict = {}
@@ -81,6 +81,7 @@ def FormSubmitName(form_component):
         form_component: The str name of the form component to use.
     """
     import reflex as rx
+    from reflex.vars import mark_used
 
     class FormState(rx.State):
         form_data: dict = {}
@@ -89,6 +90,12 @@ def FormSubmitName(form_component):
 
         def form_submit(self, form_data: dict):
             self.form_data = form_data
+
+    mark_used(
+        FormState.form_data,
+        FormState.val,
+        FormState.options,
+    )
 
     app = rx.App(state=rx.State)
 
