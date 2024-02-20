@@ -1656,6 +1656,9 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
         base_vars = {
             prop_name: self.get_value(getattr(self, prop_name), include=self.base_vars[prop_name]._var_used_attributes)  # type: ignore[call-arg]
             for prop_name in self.base_vars
+            if self.base_vars[prop_name]._var_is_used
+            or prop_name == constants.ROUTER
+            or prop_name == constants.CompileVars.IS_HYDRATED
         }
         if initial:
             computed_vars = {
@@ -1665,13 +1668,18 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
                 and not isinstance(cv._initial_value, types.Unset)
                 else self.get_value(getattr(self, prop_name), include=self.computed_vars[prop_name]._var_used_attributes)  # type: ignore[call-arg]
                 for prop_name, cv in self.computed_vars.items()
+                if self.computed_vars[prop_name]._var_is_used
             }
         elif include_computed:
             computed_vars = {
                 # Include the computed vars.
                 prop_name: self.get_value(getattr(self, prop_name), include=self.computed_vars[prop_name]._var_used_attributes)  # type: ignore[call-arg]
                 for prop_name in self.computed_vars
+                if self.computed_vars[prop_name]._var_is_used
             }
+        else:
+            computed_vars = {}
+
         variables = {**base_vars, **computed_vars}
 
         d = {
