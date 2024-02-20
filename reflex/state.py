@@ -779,7 +779,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_token",
             reason="replaced by `State.router.session.client_token`",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         return self.router_data.get(constants.RouteVar.CLIENT_TOKEN, "")
 
@@ -793,7 +793,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_sid",
             reason="replaced by `State.router.session.session_id`",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         return self.router_data.get(constants.RouteVar.SESSION_ID, "")
 
@@ -807,7 +807,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_headers",
             reason="replaced by `State.router.headers`",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         return self.router_data.get(constants.RouteVar.HEADERS, {})
 
@@ -821,7 +821,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_client_ip",
             reason="replaced by `State.router.session.client_ip`",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         return self.router_data.get(constants.RouteVar.CLIENT_IP, "")
 
@@ -838,7 +838,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_current_page",
             reason="replaced by State.router.page / self.router.page",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
 
         return self.router.page.raw_path if origin else self.router.page.path
@@ -855,7 +855,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name="get_query_params",
             reason="replaced by `State.router.page.params`",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         return self.router_data.get(constants.RouteVar.QUERY, {})
 
@@ -869,7 +869,7 @@ class BaseState(Base, ABC, extra=pydantic.Extra.allow):
             feature_name=f"rx.get_cookies",
             reason="and has been replaced by rx.Cookie, which can be used as a state var",
             deprecation_version="0.3.0",
-            removal_version="0.4.0",
+            removal_version="0.5.0",
         )
         cookie_dict = {}
         cookies = self.get_headers().get(constants.RouteVar.COOKIE, "").split(";")
