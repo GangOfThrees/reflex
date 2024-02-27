@@ -163,14 +163,18 @@ class ChildState2(TestState):
 
     value: str
 
+
 mark_used(ChildState2.value)
+
 
 class ChildState3(TestState):
     """A child state fixture."""
 
     value: str
 
+
 mark_used(ChildState3.value)
+
 
 class GrandchildState(ChildState):
     """A grandchild state fixture."""
@@ -181,7 +185,9 @@ class GrandchildState(ChildState):
         """Do something."""
         pass
 
+
 mark_used(GrandchildState.value2)
+
 
 class GrandchildState2(ChildState2):
     """A grandchild state fixture."""
@@ -195,7 +201,9 @@ class GrandchildState2(ChildState2):
         """
         return self.value
 
+
 mark_used(GrandchildState2.value)
+
 
 class GrandchildState3(ChildState3):
     """A great grandchild state fixture."""
@@ -208,6 +216,7 @@ class GrandchildState3(ChildState3):
             The value.
         """
         return self.value
+
 
 mark_used(GrandchildState3.value)
 
