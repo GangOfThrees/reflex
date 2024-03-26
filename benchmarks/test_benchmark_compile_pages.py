@@ -195,7 +195,7 @@ def AppWithTenThousandPages():
     render_multiple_pages(app, 10000)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_with_one_page(
     tmp_path_factory,
 ) -> Generator[AppHarness, None, None]:
@@ -209,10 +209,11 @@ def app_with_one_page(
     """
     root = tmp_path_factory.mktemp(f"app1")
 
-    yield AppHarness.create(root=root, app_source=AppWithOnePage)  # type: ignore
+    with AppHarness.create(root=root, app_source=AppWithOnePage) as harness:  # type: ignore
+        yield harness
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_with_ten_pages(
     tmp_path_factory,
 ) -> Generator[AppHarness, None, None]:
@@ -225,10 +226,11 @@ def app_with_ten_pages(
         an AppHarness instance
     """
     root = tmp_path_factory.mktemp(f"app10")
-    yield AppHarness.create(root=root, app_source=functools.partial(AppWithTenPages, render_comp=render_multiple_pages))  # type: ignore
+    with AppHarness.create(root=root, app_source=functools.partial(AppWithTenPages, render_comp=render_multiple_pages)) as harness:  # type: ignore
+        yield harness
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_with_hundred_pages(
     tmp_path_factory,
 ) -> Generator[AppHarness, None, None]:
@@ -242,15 +244,16 @@ def app_with_hundred_pages(
     """
     root = tmp_path_factory.mktemp(f"app100")
 
-    yield AppHarness.create(
+    with AppHarness.create(
         root=root,
         app_source=functools.partial(
             AppWithHundredPages, render_comp=render_multiple_pages  # type: ignore
         ),
-    )  # type: ignore
+    ) as harness:  # type: ignore
+        yield harness
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_with_thousand_pages(
     tmp_path_factory,
 ) -> Generator[AppHarness, None, None]:
@@ -264,15 +267,16 @@ def app_with_thousand_pages(
     """
     root = tmp_path_factory.mktemp(f"app1000")
 
-    yield AppHarness.create(
+    with AppHarness.create(
         root=root,
         app_source=functools.partial(  # type: ignore
             AppWithThousandPages, render_comp=render_multiple_pages  # type: ignore
         ),
-    )  # type: ignore
+    ) as harness:  # type: ignore
+        yield harness
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_with_ten_thousand_pages(
     tmp_path_factory,
 ) -> Generator[AppHarness, None, None]:
@@ -286,12 +290,13 @@ def app_with_ten_thousand_pages(
     """
     root = tmp_path_factory.mktemp(f"app10000")
 
-    yield AppHarness.create(
+    with AppHarness.create(
         root=root,
         app_source=functools.partial(
             AppWithTenThousandPages, render_comp=render_multiple_pages  # type: ignore
         ),
-    )  # type: ignore
+    ) as harness:  # type: ignore
+        yield harness
 
 
 @pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
