@@ -209,7 +209,7 @@ def app_with_one_page(
     """
     root = tmp_path_factory.mktemp(f"app1")
 
-    yield AppHarness.create(root=root, app_source=AppWithOnePage)  # type: ignore
+    yield AppHarness.create(root=root, app_source=AppWithOnePage) # type: ignore
 
 
 @pytest.fixture(scope="session")
@@ -225,7 +225,7 @@ def app_with_ten_pages(
         an AppHarness instance
     """
     root = tmp_path_factory.mktemp(f"app10")
-    yield AppHarness.create(root=root, app_source=functools.partial(AppWithTenPages, render_comp=render_multiple_pages))  # type: ignore
+    yield AppHarness.create(root=root, app_source=functools.partial(AppWithTenPages, render_comp=render_multiple_pages)) # type: ignore
 
 
 @pytest.fixture(scope="session")
@@ -247,7 +247,7 @@ def app_with_hundred_pages(
         app_source=functools.partial(
             AppWithHundredPages, render_comp=render_multiple_pages  # type: ignore
         ),
-    )  # type: ignore
+    )
 
 
 @pytest.fixture(scope="session")
@@ -269,7 +269,7 @@ def app_with_thousand_pages(
         app_source=functools.partial(  # type: ignore
             AppWithThousandPages, render_comp=render_multiple_pages  # type: ignore
         ),
-    )  # type: ignore
+    )
 
 
 @pytest.fixture(scope="session")
@@ -347,211 +347,211 @@ def test_app_1_compile_time_warm(benchmark, app_with_one_page):
     benchmark(benchmark_fn)
 
 
-@pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_10_compile_time_cold(benchmark, app_with_ten_pages):
-    """Test the compile time on a cold start for an app with 10 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_ten_pages: The app harness.
-    """
-
-    def setup():
-        with chdir(app_with_ten_pages.app_path):
-            utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
-            app_with_ten_pages._initialize_app()
-            build.setup_frontend(app_with_ten_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_ten_pages.app_path):
-            app_with_ten_pages.app_instance.compile_()
-
-    benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
-
-
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    min_rounds=5,
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_10_compile_time_warm(benchmark, app_with_ten_pages):
-    """Test the compile time on a warm start for an app with 10 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_ten_pages: The app harness.
-    """
-    with chdir(app_with_ten_pages.app_path):
-        app_with_ten_pages._initialize_app()
-        build.setup_frontend(app_with_ten_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_ten_pages.app_path):
-            app_with_ten_pages.app_instance.compile_()
-
-    benchmark(benchmark_fn)
-
-
-@pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_100_compile_time_cold(benchmark, app_with_hundred_pages):
-    """Test the compile time on a cold start for an app with 100 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_hundred_pages: The app harness.
-    """
-
-    def setup():
-        with chdir(app_with_hundred_pages.app_path):
-            utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
-            app_with_hundred_pages._initialize_app()
-            build.setup_frontend(app_with_hundred_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_hundred_pages.app_path):
-            app_with_hundred_pages.app_instance.compile_()
-
-    benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
-
-
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    min_rounds=5,
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_100_compile_time_warm(benchmark, app_with_hundred_pages):
-    """Test the compile time on a warm start for an app with 100 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_hundred_pages: The app harness.
-    """
-    with chdir(app_with_hundred_pages.app_path):
-        app_with_hundred_pages._initialize_app()
-        build.setup_frontend(app_with_hundred_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_hundred_pages.app_path):
-            app_with_hundred_pages.app_instance.compile_()
-
-    benchmark(benchmark_fn)
-
-
-@pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_1000_compile_time_cold(benchmark, app_with_thousand_pages):
-    """Test the compile time on a cold start for an app with 1000 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_thousand_pages: The app harness.
-    """
-
-    def setup():
-        with chdir(app_with_thousand_pages.app_path):
-            utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
-            app_with_thousand_pages._initialize_app()
-            build.setup_frontend(app_with_thousand_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_thousand_pages.app_path):
-            app_with_thousand_pages.app_instance.compile_()
-
-    benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
-
-
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    min_rounds=5,
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_1000_compile_time_warm(benchmark, app_with_thousand_pages):
-    """Test the compile time on a warm start for an app with 1000 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_thousand_pages: The app harness.
-    """
-    with chdir(app_with_thousand_pages.app_path):
-        app_with_thousand_pages._initialize_app()
-        build.setup_frontend(app_with_thousand_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_thousand_pages.app_path):
-            app_with_thousand_pages.app_instance.compile_()
-
-    benchmark(benchmark_fn)
-
-
-@pytest.mark.skip
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_10000_compile_time_cold(benchmark, app_with_ten_thousand_pages):
-    """Test the compile time on a cold start for an app with 10000 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_ten_thousand_pages: The app harness.
-    """
-
-    def setup():
-        with chdir(app_with_ten_thousand_pages.app_path):
-            utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
-            app_with_ten_thousand_pages._initialize_app()
-            build.setup_frontend(app_with_ten_thousand_pages.app_path)
-
-    def benchmark_fn():
-        with chdir(app_with_ten_thousand_pages.app_path):
-            app_with_ten_thousand_pages.app_instance.compile_()
-
-    benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
-
-
-@pytest.mark.skip
-@pytest.mark.benchmark(
-    group="Compile time of varying page numbers",
-    min_rounds=5,
-    timer=time.perf_counter,
-    disable_gc=True,
-    warmup=False,
-)
-def test_app_10000_compile_time_warm(benchmark, app_with_ten_thousand_pages):
-    """Test the compile time on a warm start for an app with 10000 page.
-
-    Args:
-        benchmark: The benchmark fixture.
-        app_with_ten_thousand_pages: The app harness.
-    """
-
-    def benchmark_fn():
-        with chdir(app_with_ten_thousand_pages.app_path):
-            app_with_ten_thousand_pages.app_instance.compile_()
-
-    benchmark(benchmark_fn)
+# @pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_10_compile_time_cold(benchmark, app_with_ten_pages):
+#     """Test the compile time on a cold start for an app with 10 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_ten_pages: The app harness.
+#     """
+#
+#     def setup():
+#         with chdir(app_with_ten_pages.app_path):
+#             utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
+#             app_with_ten_pages._initialize_app()
+#             build.setup_frontend(app_with_ten_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_ten_pages.app_path):
+#             app_with_ten_pages.app_instance.compile_()
+#
+#     benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
+#
+#
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     min_rounds=5,
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_10_compile_time_warm(benchmark, app_with_ten_pages):
+#     """Test the compile time on a warm start for an app with 10 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_ten_pages: The app harness.
+#     """
+#     with chdir(app_with_ten_pages.app_path):
+#         app_with_ten_pages._initialize_app()
+#         build.setup_frontend(app_with_ten_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_ten_pages.app_path):
+#             app_with_ten_pages.app_instance.compile_()
+#
+#     benchmark(benchmark_fn)
+#
+#
+# @pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_100_compile_time_cold(benchmark, app_with_hundred_pages):
+#     """Test the compile time on a cold start for an app with 100 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_hundred_pages: The app harness.
+#     """
+#
+#     def setup():
+#         with chdir(app_with_hundred_pages.app_path):
+#             utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
+#             app_with_hundred_pages._initialize_app()
+#             build.setup_frontend(app_with_hundred_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_hundred_pages.app_path):
+#             app_with_hundred_pages.app_instance.compile_()
+#
+#     benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
+#
+#
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     min_rounds=5,
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_100_compile_time_warm(benchmark, app_with_hundred_pages):
+#     """Test the compile time on a warm start for an app with 100 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_hundred_pages: The app harness.
+#     """
+#     with chdir(app_with_hundred_pages.app_path):
+#         app_with_hundred_pages._initialize_app()
+#         build.setup_frontend(app_with_hundred_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_hundred_pages.app_path):
+#             app_with_hundred_pages.app_instance.compile_()
+#
+#     benchmark(benchmark_fn)
+#
+#
+# @pytest.mark.skipif(constants.IS_WINDOWS, reason=WINDOWS_SKIP_REASON)
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_1000_compile_time_cold(benchmark, app_with_thousand_pages):
+#     """Test the compile time on a cold start for an app with 1000 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_thousand_pages: The app harness.
+#     """
+#
+#     def setup():
+#         with chdir(app_with_thousand_pages.app_path):
+#             utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
+#             app_with_thousand_pages._initialize_app()
+#             build.setup_frontend(app_with_thousand_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_thousand_pages.app_path):
+#             app_with_thousand_pages.app_instance.compile_()
+#
+#     benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
+#
+#
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     min_rounds=5,
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_1000_compile_time_warm(benchmark, app_with_thousand_pages):
+#     """Test the compile time on a warm start for an app with 1000 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_thousand_pages: The app harness.
+#     """
+#     with chdir(app_with_thousand_pages.app_path):
+#         app_with_thousand_pages._initialize_app()
+#         build.setup_frontend(app_with_thousand_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_thousand_pages.app_path):
+#             app_with_thousand_pages.app_instance.compile_()
+#
+#     benchmark(benchmark_fn)
+#
+#
+# @pytest.mark.skip
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_10000_compile_time_cold(benchmark, app_with_ten_thousand_pages):
+#     """Test the compile time on a cold start for an app with 10000 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_ten_thousand_pages: The app harness.
+#     """
+#
+#     def setup():
+#         with chdir(app_with_ten_thousand_pages.app_path):
+#             utils.empty_dir(constants.Dirs.WEB_PAGES, keep_files=["_app.js"])
+#             app_with_ten_thousand_pages._initialize_app()
+#             build.setup_frontend(app_with_ten_thousand_pages.app_path)
+#
+#     def benchmark_fn():
+#         with chdir(app_with_ten_thousand_pages.app_path):
+#             app_with_ten_thousand_pages.app_instance.compile_()
+#
+#     benchmark.pedantic(benchmark_fn, setup=setup, rounds=5)
+#
+#
+# @pytest.mark.skip
+# @pytest.mark.benchmark(
+#     group="Compile time of varying page numbers",
+#     min_rounds=5,
+#     timer=time.perf_counter,
+#     disable_gc=True,
+#     warmup=False,
+# )
+# def test_app_10000_compile_time_warm(benchmark, app_with_ten_thousand_pages):
+#     """Test the compile time on a warm start for an app with 10000 page.
+#
+#     Args:
+#         benchmark: The benchmark fixture.
+#         app_with_ten_thousand_pages: The app harness.
+#     """
+#
+#     def benchmark_fn():
+#         with chdir(app_with_ten_thousand_pages.app_path):
+#             app_with_ten_thousand_pages.app_instance.compile_()
+#
+#     benchmark(benchmark_fn)
